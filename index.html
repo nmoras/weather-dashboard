@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+    <style>
+    
+    row{
+        border: 1px solid black;
+    }
+    .container{
+        border: 1px solid red;
+        height: 25rem;
+    }
+    font{
+    font-family: 'Lato', sans-serif;
+    }
+    .head-row{
+        background-color: black;
+        color: white;
+    }
+    .btn{
+        background: black;
+    }
+    .main{
+       
+    }
+    .btn-search{
+        border-radius: 10px;
+        background-color: black;
+        color: white;
+    }
+    .section1-sub{
+        font:15px;
+    }
+
+    </style>
+</head>
+<body>
+    <div class="container col-10">
+        <div class="row justify-content-center p-3 head-row">
+            <div class="col-12 head-div">
+                <h3 class="text-center heading">Weather Dashboard</h3>
+            </div>
+        </div>
+        <div class="row mt-3 main">
+            <div class="col-4">
+                <form>
+                    <input type="search" class="mt-1" id="search-input" placeholder="Enter city...">
+                    <button type="submit" class="btn-search">Search</button>
+                </form>  
+                <div id="createBtn">
+
+                </div>  
+            </div>
+            <div class="col-8 section1">
+                <div class="col-12 section1-sub p-3">
+                    
+                    <div class="city"></div>
+                        <div class="mt-3 ">
+                            <div class="temp"></div>
+                            <div class="humidity"></div>
+                            <div class="wind"></div>
+                            <div class="uv"></div>
+                        </div>
+                </div> 
+                <div class="col-12">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+
+                </div>   
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+
+    
+    $(".btn-search").on("click", createBtn);
+
+    function createBtn(e){
+        e.preventDefault();
+
+        var cityButton = $("#search-input").val();
+        console.log(cityButton);
+        //test if the button array is null
+        if (localStorage.getItem("buttonsKey") == null){
+         console.log(localStorage.getItem("buttons") === null)
+        //intialize the arry    
+            var buttonsArray = [];
+        
+        //add button into the array
+        buttonsArray.push(cityButton);  
+        console.log(buttonsArray);      
+
+        //create the button
+        $("#createBtn").html(`<button>${cityButton}</button>`);
+
+        //set to local storage
+        localStorage.setItem('buttonsKey', JSON.stringify(buttonsArray));
+        } 
+        else{
+            console.log('i am the else loop here')
+            //get bookmarks from local storage
+            var buttonsArray = JSON.parse(localStorage.getItem('buttonsKey'));
+            console.log(buttonsArray);
+
+             for(let i = 0; i < buttonsArray.length; i++){
+              if (buttonsArray[i] == cityButton){
+                 console.log('the city already exists');
+                break;
+              } else{
+                  //add button into the array
+                  buttonsArray.push(cityButton);
+                  localStorage.setItem('buttonsKey', JSON.stringify(buttonsArray));
+                  //create the button
+                $("#createBtn").html(`<button>${cityButton}</button>`);
+
+              }
+          }
+        }
+    }
+    
+
+    function showCityInfo(event){
+    event.preventDefault();
+
+
+    var cityName = $("#search-input").val();
+    console.log(`the city name is ${cityName}`);
+
+         // This is our API key
+    var APIKey = "7635c7831665c79d31c4b8a3b9478080";
+
+    // Here we are building the URL we need to query the database
+    var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&APPID=" + APIKey;
+
+    // Here we run our AJAX call to the OpenWeatherMap API
+    $.ajax({
+    url: queryURL,
+    method: "GET"
+    })
+    // We store all of the retrieved data inside of an object called "response"
+    .then(function(response) {
+    console.log(queryURL);   
+    console.log(response);
+    console.log(response.main.temp)
+
+    $(".city").html(`<h4> ${cityName}   </h4>`);
+    $(".temp").text("Temperature:" + " " + response.main.temp);
+    $(".humidity").text("Humidity:" + " " + response.main.humidity);
+    $(".wind").text("Wind:" + " " + response.wind.speed)
+    $(".uv").text("UV Index:" + " " + response.wind.speed)
+    $(".section1-sub").css("border", "1px solid lightgrey")
+
+    function forecast(){
+    
+    
+    
+        cityName = $("#search-input").val();    
+    var queryURLNew = "api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&APPID=" + APIKey;
+
+    // Here we run our AJAX call to the OpenWeatherMap API
+    $.ajax({
+    url: queryURLNew,
+    method: "GET"
+    })
+    .then(function(key) { 
+        console.log('i am forecast fn')
+        console.log(key);
+
+
+    } );
+
+
+    
+    } //end of function forecast
+
+
+    });
+    };
+
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>    
+
+</body>
+</html>
