@@ -45,6 +45,9 @@
         width: 160px;
         color: white;
     }
+    .inputClass{
+        text-transform:uppercase;
+    }
 
     </style>
 </head>
@@ -58,7 +61,7 @@
         <div class="row mt-3 main">
             <div class="col-4">
                 <form>
-                    <input type="search" class="mt-1" id="search-input" placeholder="Enter city...">
+                    <input type="search" class="inputClass mt-1" id="search-input" placeholder="Enter city...">
                     <button type="submit" class="btn-search">Search</button>
                 </form>  
                 <div id="createBtn" class="mt-2">
@@ -106,7 +109,7 @@
         
         function createBtn(e){
             e.preventDefault();
-            var cityButton = $("#search-input").val();
+            var cityButton = $("#search-input").val().toUpperCase();
             if (localStorage.getItem("buttonsKey") == null){
             var buttonsArray = [];
             buttonsArray.push(cityButton);  
