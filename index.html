@@ -37,6 +37,14 @@
     .section1-sub{
         font:15px;
     }
+    .dynamicBtn{
+        padding-right: 10px;
+        background: black;
+        border-bottom: 1px red;
+        box-shadow: none;
+        width: 160px;
+        color: white;
+    }
 
     </style>
 </head>
@@ -53,13 +61,12 @@
                     <input type="search" class="mt-1" id="search-input" placeholder="Enter city...">
                     <button type="submit" class="btn-search">Search</button>
                 </form>  
-                <div id="createBtn">
+                <div id="createBtn" class="mt-2">
 
                 </div>  
             </div>
             <div class="col-8 section1">
                 <div class="col-12 section1-sub p-3">
-                    
                     <div class="city"></div>
                         <div class="mt-3 ">
                             <div class="temp"></div>
@@ -82,74 +89,66 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript">
 
-
-    
-    $(".btn-search").on("click", createBtn);
-
-    function createBtn(e){
-        e.preventDefault();
-
-        var cityButton = $("#search-input").val();
-        console.log(cityButton);
-        //test if the button array is null
-        if (localStorage.getItem("buttonsKey") == null){
-         console.log(localStorage.getItem("buttons") === null)
-        //intialize the arry    
-            var buttonsArray = [];
-        
-        //add button into the array
-        buttonsArray.push(cityButton);  
-        console.log(buttonsArray);      
-
-        //create the button
-        $("#createBtn").html(`<button>${cityButton}</button>`);
-
-        //set to local storage
-        localStorage.setItem('buttonsKey', JSON.stringify(buttonsArray));
-        } 
-        else{
-            console.log('i am the else loop here')
-            //get bookmarks from local storage
-            var buttonsArray = JSON.parse(localStorage.getItem('buttonsKey'));
-            console.log(buttonsArray);
-
-             for(let i = 0; i < buttonsArray.length; i++){
-              if (buttonsArray[i] == cityButton){
-                 console.log('the city already exists');
-                break;
-              } else{
-                  //add button into the array
-                  buttonsArray.push(cityButton);
-                  localStorage.setItem('buttonsKey', JSON.stringify(buttonsArray));
-                  //create the button
-                $("#createBtn").html(`<button>${cityButton}</button>`);
-
-              }
-          }
+    $(document).ready(function(){
+        var cityButton;
+        var buttonsArray;
+        var cityButton;
+        if (localStorage.getItem("buttonsKey") !== null)
+        {
+            buttonsArray = JSON.parse(localStorage.getItem('buttonsKey'));
+            $("#createBtn").empty();
+            for(var i = 0; i < buttonsArray.length; i++){   
+                
+            $("#createBtn").append(`<button class="dynamicBtn btnArray mt-1">${buttonsArray[i]}</button><br/>`);
+            }
         }
-    }
+        $(".btn-search").on("click", createBtn);
+        
+        function createBtn(e){
+            e.preventDefault();
+            var cityButton = $("#search-input").val();
+            if (localStorage.getItem("buttonsKey") == null){
+            var buttonsArray = [];
+            buttonsArray.push(cityButton);  
+            $("#createBtn").append(`<button class="dynamicBtn mt-1">${cityButton}</button>`);
+            localStorage.setItem('buttonsKey', JSON.stringify(buttonsArray));
+            } 
+            else{   
+
+                buttonsArray = JSON.parse(localStorage.getItem('buttonsKey'));
+                if(buttonsArray.indexOf(cityButton) == -1){
+                buttonsArray.push(cityButton); 
+                console.log(cityButton)
+                $("#createBtn").prepend(`<button class="dynamicBtn mt-1">${cityButton}</button>`);   
+                }
+                localStorage.setItem('buttonsKey', JSON.stringify(buttonsArray));
+            }
+        }
     
+    });
 
-    function showCityInfo(event){
-    event.preventDefault();
-
-
-    var cityName = $("#search-input").val();
-    console.log(`the city name is ${cityName}`);
-
-         // This is our API key
+    function showinfo(CityButton){
+    
     var APIKey = "7635c7831665c79d31c4b8a3b9478080";
-
     // Here we are building the URL we need to query the database
-    var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&APPID=" + APIKey;
-
+    var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityButton + "&APPID=" + APIKey;
     // Here we run our AJAX call to the OpenWeatherMap API
     $.ajax({
     url: queryURL,
     method: "GET"
-    })
-    // We store all of the retrieved data inside of an object called "response"
-    .then(function(response) {
+    }).then(mainSectionInfo);
+
+    var queryURLNew = "api.openweathermap.org/data/2.5/forecast?q=" + cityButton + "&APPID=" + APIKey;
+   
+    $.ajax({
+    url: queryURLNew,
+    method: "GET"
+    }).then(forecastSection);
+    
+    }    
+    
+    function mainSectionInfo(cityButton){
+
     console.log(queryURL);   
     console.log(response);
     console.log(response.main.temp)
@@ -161,33 +160,17 @@
     $(".uv").text("UV Index:" + " " + response.wind.speed)
     $(".section1-sub").css("border", "1px solid lightgrey")
 
-    function forecast(){
+     }
     
-    
-    
-        cityName = $("#search-input").val();    
-    var queryURLNew = "api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&APPID=" + APIKey;
+    function forecastSection(cityButton){ 
 
     // Here we run our AJAX call to the OpenWeatherMap API
-    $.ajax({
-    url: queryURLNew,
-    method: "GET"
-    })
-    .then(function(key) { 
-        console.log('i am forecast fn')
-        console.log(key);
-
-
-    } );
-
-
     
-    } //end of function forecast
-
-
-    });
+    //end of function forecast
     };
 
+    
+    
 
     </script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
