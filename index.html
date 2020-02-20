@@ -10,11 +10,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
    <style>
-    
-   body{
-       background: lightskyblue;
-   }
-    font{
+   
+    body{
     font-family: 'Lato', sans-serif;
     }
     .head-row{
@@ -140,7 +137,7 @@
             buttonsArray = JSON.parse(localStorage.getItem('buttonsKey'));
             $("#createBtn").empty();
             for(var i = 0; i < buttonsArray.length; i++){       
-            $("#createBtn").append(`<button class="dynamicBtn btnArray mt-1" onclick="showinfo(${buttonsArray[i]});">${buttonsArray[i]}<span class="closeicon" onclick="deleteCity(${buttonsArray[i]});"><i class="fa fa-window-close"></i></span></button><br/>`);
+            $("#createBtn").append(`<button class="dynamicBtn btnArray mt-1" onclick="showinfo(${buttonsArray[i]});">${buttonsArray[i]}<span class="closeicon"><i class="fa fa-window-close" onclick="deleteFunc();"></i></span></button><br/>`);
             }
         }
         $(".btn-search").on("click", createBtn);
@@ -151,7 +148,7 @@
             if (localStorage.getItem("buttonsKey") == null){
             var buttonsArray = [];
             buttonsArray.push(cityButton);  
-            $("#createBtn").append(`<button class="dynamicBtn mt-1">${cityButton}</button>`);
+            $("#createBtn").append(`<button class="dynamicBtn mt-1">${cityButton}<span class="closeicon"><i class="fa fa-window-close" onclick="deleteFunc();"></i></span></button>`);
             localStorage.setItem('buttonsKey', JSON.stringify(buttonsArray));
             } 
             else{   
@@ -159,7 +156,7 @@
                 if(buttonsArray.indexOf(cityButton) == -1){
                 buttonsArray.push(cityButton); 
                 console.log(cityButton)
-                $("#createBtn").prepend(`<button class="dynamicBtn mt-1" onclick="showinfo(${cityButton})">${cityButton}</button>`);   
+                $("#createBtn").prepend(`<button class="dynamicBtn mt-1" onclick="showinfo(${cityButton})">${cityButton}<span class="closeicon"><i class="fa fa-window-close" onclick="deleteFunc();"></i></span></button>`);   
                 }
                 localStorage.setItem('buttonsKey', JSON.stringify(buttonsArray));
             }
@@ -268,7 +265,8 @@
     $(".day5icon").append(`<img src="${iconurl5}">`);
     } 
 
-    function deleteCity(buttonsArray){
+    function deleteFunc(){
+        alert('i am clicked');
         const index = buttonsArray.indexOf(buttonsArray[i]);
         buttonsArray.splice(index, 1);
 
